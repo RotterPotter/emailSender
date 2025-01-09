@@ -1,0 +1,5 @@
+.env
+database.sqlite
+__pycache__/
+.venv/
+clients.json
