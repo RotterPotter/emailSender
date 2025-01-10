@@ -22,7 +22,7 @@ def send_email(email_address, client_name):
     try:
         # Set up the email message
         sender_email = settings.EMAIL_SENDER
-        sender_password = settings.EMAIL_PASSWORD
+        sendgrid_api_key = settings.SENDGRID_API_KEY  # Use the API key as the password
         subject = "Opportunità di Collaborazione con TuscanyAI"
         body = f"""
 Gentile {client_name},
@@ -48,7 +48,6 @@ Fondatore, TuscanyAI
 📞 +39 340 371 4830  
 """
 
-
         # Create the email
         msg = MIMEMultipart()
         msg['From'] = sender_email
@@ -56,16 +55,17 @@ Fondatore, TuscanyAI
         msg['Subject'] = subject
         msg.attach(MIMEText(body, 'plain'))
 
-        # Connect to Gmail's SMTP server
-        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+        # Connect to SendGrid's SMTP server
+        with smtplib.SMTP("smtp.sendgrid.net", 587) as server:
             server.starttls()  # Upgrade the connection to a secure encrypted SSL/TLS connection
-            server.login(sender_email, sender_password)  # Log in to the Gmail account
+            server.login("apikey", sendgrid_api_key)  # Use "apikey" as the username and your API key as the password
             server.send_message(msg)  # Send the email
 
         logger.info(f"Email successfully sent to {email_address}")
 
     except Exception as e:
-        logger.info(f"Failed to send email to {email_address}. Error: {e}")
+        logger.error(f"Failed to send email to {email_address}. Error: {e}")
+
 
 def fill_database():
     with open('clients.json', 'r') as f:
